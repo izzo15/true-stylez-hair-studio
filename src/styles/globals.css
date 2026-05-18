@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --primary-color: #d94600;
+  --secondary-color: #1a1f2e;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-primary-900 text-white font-body;
+  background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply font-heading;
+}
+
+/* Barber Pole Animation */
+@keyframes spin-pole {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+.barber-pole {
+  background: linear-gradient(
+    to bottom,
+    #d94600 0%,
+    #d94600 25%,
+    #ffffff 25%,
+    #ffffff 50%,
+    #d94600 50%,
+    #d94600 75%,
+    #ffffff 75%,
+    #ffffff 100%
+  );
+  background-size: 100% 800%;
+  animation: spin-pole 2s linear infinite;
+}
+
+/* Glass morphism */
+.glass {
+  background: rgba(26, 31, 46, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Clip path animations */
+.clip-transition {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 0.5s ease;
+}
+
+/* Comb wave effect */
+.comb-wave {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(217, 70, 0, 0.3),
+    transparent
+  );
+  animation: comb-sweep 0.8s ease-out;
+}
+
+@keyframes comb-sweep {
+  to { left: 100%; }
+}
+
+/* Logo vibration */
+@keyframes vibrate {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.logo-vibrate:hover {
+  animation: vibrate 0.2s infinite;
+}
+
+/* Scissor animation */
+@keyframes scissor-cut {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  50% { transform: translateY(-50%) rotate(10deg); }
+  100% { transform: translateY(-50%) rotate(-10deg); }
+}
+
+.scissor-spin {
+  animation: scissor-cut 2s infinite;
+}
+
+/* Konami mode */
+.konami-mode {
+  filter: contrast(1.2) saturate(1.5);
+}
+
+/* Pixel barber animation */
+@keyframes nod {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-10deg); }
+  75% { transform: rotate(10deg); }
+}
+
+.pixel-barber:hover {
+  animation: nod 0.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  /* Disable specific decorative animations */
+  .barber-pole,
+  .logo-vibrate,
+  .pixel-barber,
+  .scissor-spin,
+  .comb-wave {
+    animation: none !important;
+  }
+}

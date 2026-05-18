@@ -1,0 +1,6 @@
+# https://truestylez.com/robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://truestylez.com/sitemap.xml

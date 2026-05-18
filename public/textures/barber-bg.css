@@ -1,0 +1,15 @@
+/* Placeholder barber background - dark gradient with texture */
+body {
+  background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+}
+
+/* Barber pole stripes */
+.barber-stripe {
+  background: repeating-linear-gradient(
+    to bottom,
+    #d94600,
+    #d94600 20px,
+    #fff 20px,
+    #fff 40px
+  );
+}
