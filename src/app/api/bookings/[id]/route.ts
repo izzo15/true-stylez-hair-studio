@@ -8,13 +8,14 @@ const updateSchema = z.object({
   note: z.string().optional(),
 })
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const body = await request.json()
     const data = updateSchema.parse(body)
 
     const booking = await db.booking.update({
-      where: { id: params.id },
+      where: { id },
       data,
       include: { service: true, barber: true },
     })
