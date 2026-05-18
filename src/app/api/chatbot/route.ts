@@ -3,10 +3,6 @@ import OpenAI from 'openai'
 import { db } from '@/lib/db'
 import { getAvailableSlots, formatSlotTime } from '@/lib/availability'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-
 const tools = [
   {
     type: 'function' as const,
@@ -73,6 +69,12 @@ async function handleGetAvailability(serviceId: string, date: string, barberId?:
 }
 
 export async function POST(request: NextRequest) {
+  const apiKey = process.env.OPENAI_API_KEY
+  if (!apiKey) {
+    return NextResponse.json({ error: 'OpenAI key not configured' }, { status: 500 })
+  }
+  const openai = new OpenAI({ apiKey })
+
   try {
     const { messages } = await request.json()
 
