@@ -3,6 +3,9 @@ import { db } from '@/lib/db'
 import { z } from 'zod'
 import { sendBookingConfirmation } from '@/lib/email'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 const updateSchema = z.object({
   status: z.enum(['PENDING', 'CONFIRMED', 'CANCELLED']).optional(),
   note: z.string().optional(),

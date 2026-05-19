@@ -4,6 +4,8 @@ import { z } from 'zod'
 import { getAvailableSlots } from '@/lib/availability'
 import { sendBookingConfirmation } from '@/lib/email'
 
+export const dynamic = 'force-dynamic'
+
 const bookingSchema = z.object({
   customerName: z.string().min(1),
   phone: z.string().optional(),

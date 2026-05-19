@@ -3,6 +3,8 @@ import OpenAI from 'openai'
 import { db } from '@/lib/db'
 import { getAvailableSlots, formatSlotTime } from '@/lib/availability'
 
+export const dynamic = 'force-dynamic'
+
 const tools = [
   {
     type: 'function' as const,
