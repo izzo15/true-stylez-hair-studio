@@ -1,5 +1,5 @@
 import '@/styles/globals.css'
-import { SessionProvider } from 'next-auth/react'
+import Providers from '@/components/Providers'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getSeasonalThemeVars } from '@/lib/seasonalTheme'
@@ -29,6 +29,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const session = await getServerSession(authOptions)
+
   return (
     <html lang="en" className="scroll-smooth">
       <head>
@@ -41,12 +42,12 @@ export default async function RootLayout({
           src="https://plausible.io/js/script.js"
         />
       </head>
-      <SessionProvider session={session}>
-        <body className="antialiased">
+      <body className="antialiased">
+        <Providers session={session}>
           <ServiceWorkerProvider />
           {children}
-        </body>
-      </SessionProvider>
+        </Providers>
+      </body>
     </html>
   )
 }
