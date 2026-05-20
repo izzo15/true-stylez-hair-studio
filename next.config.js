@@ -19,6 +19,7 @@ const nextConfig = {
   },
   // Skip prerendering for API routes
   trailingSlash: false,
+  transpilePackages: ['@react-three/drei', '@react-three/fiber', 'next-auth'],
 };
 
 module.exports = nextConfig;
