@@ -2,7 +2,6 @@
 
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 
 type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'ALL'
 
@@ -178,11 +177,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="glass rounded-2xl p-8 w-full max-w-md"
-      >
+      <div className="glass rounded-2xl p-8 w-full max-w-md">
         <h1 className="text-3xl font-bold mb-6 text-center">Admin Login</h1>
 
         <div className="space-y-4">
@@ -207,7 +202,7 @@ export default function AdminPage() {
             Sign In
           </button>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }
