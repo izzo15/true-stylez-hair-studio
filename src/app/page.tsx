@@ -8,14 +8,14 @@ import { BarberProfiles } from '@/components/BarberProfiles'
 import { Services } from '@/components/Services'
 import { ReviewCarousel } from '@/components/Reviews/ReviewCarousel'
 import { Chatbot } from '@/components/Chatbot'
-import dynamic from 'next/dynamic'
-import { AIStyleRecommender } from '@/components/AIStyleRecommender'
-const ThreeDChair = dynamic(() => import('@/components/ThreeDChair').then(m => ({ default: (m as any).default || m })), { ssr: false } as any)
-import { SeasonalOverlay } from '@/components/SeasonalOverlay'
+import { motion } from 'framer-motion'
 import { BookingWidget } from '@/components/BookingWidget'
 import { TrimText } from '@/components/TrimText'
 import { ShopCam } from '@/components/ShopCam'
-import { motion } from 'framer-motion'
+import { AIStyleRecommender } from '@/components/AIStyleRecommender'
+import { SeasonalOverlay } from '@/components/SeasonalOverlay'
+import CssBarberChair from '@/components/CssBarberChair'
+import ShopVideo from '@/components/ShopVideo'
 
 // JSON-LD Structured Data for LocalBusiness
 const localBusinessJsonLd = {
@@ -153,7 +153,7 @@ export default function Home() {
         <section id="3d-showcase" className="py-20 px-4 bg-primary-800/30">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-4xl font-bold text-center mb-12">The Chair</h2>
-            <ThreeDChair />
+            <CssBarberChair />
           </div>
         </section>
 
