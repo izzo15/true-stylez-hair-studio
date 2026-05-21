@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { HeroContent } from '@/components/Hero/HeroContent'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
-import { BarberProfiles } from '@/components/BarberProfiles'
 import { Services } from '@/components/Services'
 import { ReviewCarousel } from '@/components/Reviews/ReviewCarousel'
 import { Chatbot } from '@/components/Chatbot'
@@ -16,6 +15,11 @@ import { AIStyleRecommender } from '@/components/AIStyleRecommender'
 import { SeasonalOverlay } from '@/components/SeasonalOverlay'
 import CssBarberChair from '@/components/CssBarberChair'
 import ShopVideo from '@/components/ShopVideo'
+import { TheCraft } from '@/components/sections/TheCraft'
+import { TheTransformation } from '@/components/sections/TheTransformation'
+import { LivingPolaroid, BarberProfile } from '@/components/sections/LivingPolaroid'
+import { MobileQuickBook } from '@/components/MobileQuickBook'
+import { Screensaver } from '@/components/Screensaver'
 
 // JSON-LD Structured Data for LocalBusiness
 const localBusinessJsonLd = {
@@ -97,11 +101,21 @@ export default function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd, null, 2) }} />
       <Navbar />
       <BackToTopButton />
+      <Screensaver />
+      <MobileQuickBook />
       <main className="relative">
+        {/* Hero: Clipper-Reveal with Neon Blade */}
         <section id="hero" className="min-h-screen">
           <HeroContent />
         </section>
         
+        {/* The Craft: Parallax storytelling */}
+        <TheCraft />
+        
+        {/* The Transformation: Before/After Slider */}
+        <TheTransformation />
+        
+        {/* About Section with Shop Video */}
         <section id="about" className="py-20 px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-center mb-12">
@@ -121,21 +135,32 @@ export default function Home() {
             <ShopCam />
           </div>
         </section>
-
+        
+        {/* The Throne: CSS 3D Barber Chair */}
+        <section id="3d-showcase" className="py-20 px-4 bg-primary-800/30">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-12">The Throne</h2>
+            <CssBarberChair />
+          </div>
+        </section>
+        
+        {/* Barber Profile: Living Polaroid */}
         <section id="barbers" className="py-20 px-4 bg-primary-800/50">
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">Master Barbers</h2>
-            <BarberProfiles />
+             <h2 className="text-4xl font-bold text-center mb-12">The Master</h2>
+             <BarberProfile />
           </div>
         </section>
 
+        {/* Services with Comb-Wave Hover */}
         <section id="services" className="py-20 px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-4xl font-bold text-center mb-12">Our Services</h2>
             <Services />
           </div>
         </section>
-
+        
+        {/* Booking: Final Act */}
         <section id="book" className="py-20 px-4 bg-primary-800/30">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl font-bold text-center mb-4">Book Your Cut</h2>
@@ -144,20 +169,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="style-match" className="py-20 px-4">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">Style Match AI</h2>
-            <AIStyleRecommender />
-          </div>
-        </section>
-
-        <section id="3d-showcase" className="py-20 px-4 bg-primary-800/30">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">The Chair</h2>
-            <CssBarberChair />
-          </div>
-        </section>
-
+        {/* Reviews */}
         <section id="reviews" className="py-20 px-4">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-4xl font-bold text-center mb-12">What They Say</h2>

@@ -70,12 +70,13 @@ export function Services() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="glass rounded-lg p-4 text-center group relative overflow-hidden cursor-pointer"
+            className="glass rounded-lg p-4 text-center group relative overflow-hidden cursor-pointer hover:ring-1 hover:ring-accent/30 transition-all duration-300"
           >
             <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/5 transition-all" />
-            <h4 className="font-bold mb-1">{service.name}</h4>
-            <p className="text-accent font-semibold">${service.price}</p>
-            <p className="text-gray-500 text-sm">{service.duration} min</p>
+            <div className="comb-wave pointer-events-none" />
+            <h4 className="font-bold mb-1 relative z-10">{service.name}</h4>
+            <p className="text-accent font-semibold relative z-10">${service.price}</p>
+            <p className="text-gray-500 text-sm relative z-10">{service.duration} min</p>
 
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-accent scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
           </motion.div>

@@ -58,22 +58,28 @@ h1, h2, h3, h4, h5, h6 {
   transition: clip-path 0.5s ease;
 }
 
-/* Comb wave effect */
+/* Comb wave hover sweep */
 .comb-wave {
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 100%;
   height: 100%;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(217, 70, 0, 0.3),
+    rgba(217, 70, 0, 0.25),
     transparent
   );
-  animation: comb-sweep 0.8s ease-out;
+  pointer-events: none;
+  opacity: 0;
+}
+.group:hover .comb-wave {
+  opacity: 1;
+  animation: comb-sweep 0.6s ease-out forwards;
 }
 
+/* Item-based comb sweep (default) */
 @keyframes comb-sweep {
   to { left: 100%; }
 }

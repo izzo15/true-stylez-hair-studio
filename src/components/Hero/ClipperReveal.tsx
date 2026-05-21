@@ -46,8 +46,17 @@ export function ClipperReveal({ onRevealComplete }: { onRevealComplete: () => vo
     >
       <div 
         ref={bladeRef}
-        className="absolute top-0 right-0 w-1 h-full bg-accent shadow-[0_0_30px_theme(colors.accent)]"
+        className="absolute top-0 right-0 w-1.5 h-full bg-accent shadow-[0_0_30px_theme(colors.accent)]"
         style={{ transform: 'translateX(0)' }}
+      />
+      <div 
+        className="absolute top-0 right-0 w-[3px] h-full bg-accent/40 blur-[4px] pointer-events-none"
+        style={{ transform: 'translateX(0)' }}
+        aria-hidden="true"
+      />
+      <div 
+        className="absolute top-8 right-8 w-2 h-2 rounded-full bg-accent shadow-[0_0_12px_theme(colors.accent),0_0_24px_theme(colors.accent)] pointer-events-none opacity-80 animate-pulse"
+        aria-hidden="true"
       />
       <div className="text-4xl font-bold opacity-30">
         True Stylez
