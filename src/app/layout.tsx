@@ -45,9 +45,9 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
-       <Providers session={session}>
-         {children}
-       </Providers>
+        <Providers session={session}>
+          {children}
+        </Providers>
       </body>
     </html>
   )
