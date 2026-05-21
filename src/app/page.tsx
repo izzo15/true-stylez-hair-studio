@@ -117,6 +117,7 @@ export default function Home() {
                 sharp cuts and legendary fades. Your style journey starts here.
               </p>
             </motion.div>
+            <ShopVideo />
             <ShopCam />
           </div>
         </section>
