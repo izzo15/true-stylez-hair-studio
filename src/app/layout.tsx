@@ -3,7 +3,6 @@ import Providers from '@/components/Providers'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getSeasonalThemeVars } from '@/lib/seasonalTheme'
-import ServiceWorkerProvider from '@/components/ServiceWorkerProvider'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -46,10 +45,9 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <Providers session={session}>
-          <ServiceWorkerProvider />
-          {children}
-        </Providers>
+       <Providers session={session}>
+         {children}
+       </Providers>
       </body>
     </html>
   )
