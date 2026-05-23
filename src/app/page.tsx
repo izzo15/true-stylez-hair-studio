@@ -9,8 +9,8 @@ import { Footer }               from '@/components/Footer'
 import { Services }             from '@/components/Services'
 import { ReviewCarousel }       from '@/components/Reviews/ReviewCarousel'
 import { HeroContent }          from '@/components/Hero/HeroContent'
-import { ShopCam }              from '@/components/ShopCam'
-import { ShopVideo }            from '@/components/ShopVideo'
+import ShopCam                  from '@/components/ShopCam'
+import ShopVideo                from '@/components/ShopVideo'
 import { TrimText }             from '@/components/TrimText'
 import { TheCraft }             from '@/components/sections/TheCraft'
 import { TheTransformation }    from '@/components/sections/TheTransformation'
@@ -24,7 +24,7 @@ import dynamic from 'next/dynamic'
 
 const Chatbot  = dynamic(() => import('@/components/Chatbot').then(m => m.default || m), { ssr: false })
 const ChatToggle = dynamic(() => import('@/components/Chatbot/ChatToggle').then(m => m.default || m), { ssr: false })
-import AIStyleRecommender from '@/components/AIStyleRecommender'
+import { AIStyleRecommender }  from '@/components/AIStyleRecommender'
 
 // ── JSON-LD Structured Data ──────────────────────────────────────────────────
 const localBusinessJsonLd = {
