@@ -17,6 +17,7 @@
     "@tensorflow/tfjs": "^4.17.0",
     "canvas-confetti": "^1.9.4",
     "date-fns": "^3.2.0",
+    "face-api.js": "^0.22.2",
     "framer-motion": "^10.18.0",
     "gsap": "^3.12.5",
     "next": "14.2.35",

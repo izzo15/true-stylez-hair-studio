@@ -1,19 +1,43 @@
-export default function ShopVideo() {
-  // Replace with your actual video URL
-  const videoSrc = "https://videos.pexels.com/video-files/3196600/3196600-hd_1920_1080_24fps.mp4";
+'use client'
 
+/**
+ * ShopVideo
+ * Autoplaying, muted, looping background video for the About section.
+ * Included on first render.
+ */
+
+export default function ShopVideo() {
   return (
-    <div className="relative w-full h-80 overflow-hidden rounded-2xl">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-        src={videoSrc}
+    <div className="relative w-full max-w-4xl mx-auto mt-10 rounded-2xl overflow-hidden shadow-glass-lg">
+      {/* Decorative top edge */}
+      <div className="absolute top-0 inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-clove to-transparent z-10" />
+
+      {/* Gradient vignette overlay */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none"
+        aria-hidden="true"
+        style={{
+          background:
+            'linear-gradient(to bottom, transparent 60%, rgba(15,15,17,0.7) 100%)',
+        }}
       />
-      {/* Subtle overlay to make text readable if needed */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+
+      <video
+        className="w-full max-h-[480px] object-cover block"
+        autoPlay
+        muted          // Required for autoplay in all browsers
+        loop
+        playsInline    // Required on iOS to prevent full-screen takeover
+        preload="metadata"
+        aria-hidden="true"
+        poster="/textures/barber-bg.jpg"
+      >
+        <source
+          src="https://videos.pexels.com/video-files/3754986/3754986-uhd_2560_1440_25fps.mp4"
+          type="video/mp4"
+        />
+        Your browser does not support the video tag.
+      </video>
     </div>
-  );
+  )
 }

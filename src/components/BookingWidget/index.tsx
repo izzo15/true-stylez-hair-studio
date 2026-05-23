@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
@@ -35,13 +35,22 @@ interface Booking {
   status: string
 }
 
+interface BookingWidgetProps {
+  prefill?: {
+    serviceId?: string
+    barberId?: string
+    date?: string
+    time?: string
+  }
+}
+
 function extractSlots(slots: Slot[]): string[] {
   return slots.map(slot =>
     new Date(slot.startTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
   )
 }
 
-export function BookingWidget() {
+export function BookingWidget({ prefill }: BookingWidgetProps) {
   const [step, setStep] = useState(1)
   const [services, setServices] = useState<Service[]>([])
   const [barbers, setBarbers] = useState<Barber[]>([])
@@ -71,91 +80,132 @@ export function BookingWidget() {
       })
       .catch(() => setLoadingServices(false))
 
-fetch('/api/barbers')
-       .then(res => res.json())
-       .then(data => {
-         setBarbers(data)
-         setLoadingBarbers(false)
-       })
-       .catch(() => setLoadingBarbers(false))
-   }, [])
+    fetch('/api/barbers')
+        .then(res => res.json())
+        .then(data => {
+          setBarbers(data)
+          setLoadingBarbers(false)
+        })
+        .catch(() => setLoadingBarbers(false))
+    }, [])
 
-   useEffect(() => {
-     const handler = (e: CustomEvent) => {
-       const serviceId = e.detail
-       if (serviceId && services.some(s => s.id === serviceId)) {
-         setSelectedService(serviceId)
-         setStep(2)
-       }
-     }
-     window.addEventListener('prefill-service', handler as any)
-     return () => window.removeEventListener('prefill-service', handler as any)
-   }, [services])
+  // Handle prefilled service from external components (like AI recommender) via custom event
+  const servicesRef = useRef(services)
+  useEffect(() => { servicesRef.current = services }, [services])
 
-      useEffect(() => {
-        if (selectedDate && selectedService) {
-          setLoadingSlots(true)
-          setSelectedTime('')
-          setAvailableTimes([])
+  useEffect(() => {
+    const handler = (e: CustomEvent) => {
+      const serviceName = e.detail as string
+      const service = servicesRef.current.find(s => s.name === serviceName)
+      if (service) {
+        setSelectedService(service.id)
+        setStep(2)
+      }
+    }
+    window.addEventListener('prefill-service', handler as any)
+    return () => window.removeEventListener('prefill-service', handler as any)
+  }, [])
 
-          const params = new URLSearchParams({
-            date: selectedDate,
-            serviceId: selectedService,
-            ...(selectedBarber && { barberId: selectedBarber }),
-          })
+  // Handle prefill prop (from chatbot closing and opening booking widget with data)
+  useEffect(() => {
+    if (!prefill) return
 
-          fetch(`/api/availability?${params}`)
-            .then(res => res.json())
-            .then(data => {
-              if (data.error) {
-                setAvailableTimes([])
-              } else {
-                setAvailableTimes(extractSlots(data))
-              }
-              setLoadingSlots(false)
-            })
-            .catch(() => {
-              setAvailableTimes([])
-              setLoadingSlots(false)
-            })
+    if (prefill.serviceId) {
+      setSelectedService(prefill.serviceId)
+    }
+    if (prefill.barberId) {
+      setSelectedBarber(prefill.barberId)
+    }
+    if (prefill.date) {
+      setSelectedDate(prefill.date)
+    }
+    if (prefill.time) {
+      setSelectedTime(prefill.time)
+    }
+
+    // Determine step based on what we have
+    let step = 1
+    if (prefill.serviceId) {
+      step = 2
+      if (prefill.date) {
+        step = 3
+        // If we have time, we stay at step 3 (details)
+        // If we don't have time, we are at step 2 (date/time) but we already set the date, so we need to choose time
+        // Actually, step 2 is for choosing date and time. If we have date but not time, we are in step 2 and need to choose time.
+        // So we don't change step if we have date but not time.
+        // We set step to 3 only if we have both date and time.
+        if (!prefill.time) {
+          step = 2
         }
-      }, [selectedDate, selectedService, selectedBarber])
+      }
+    }
+    setStep(step)
+  }, [prefill])
 
-      // Track booking start when user enters details step
-      useEffect(() => {
-        if (step === 3) {
-          window.plausible?.('track', { props: { booking_step: 'details' } });
-        }
-      }, [step])
+  useEffect(() => {
+    if (selectedDate && selectedService) {
+      setLoadingSlots(true)
+      setSelectedTime('')
+      setAvailableTimes([])
 
-      // Track booking completion
-      useEffect(() => {
-        if (isSuccess && createdBooking) {
-          window.plausible?.('track', 'Booking Complete', {
-            props: {
-              service: createdBooking.service?.name,
-              bookingId: createdBooking.id,
-            }
-          });
-        }
-      }, [isSuccess, createdBooking]);
+      const params = new URLSearchParams({
+        date: selectedDate,
+        serviceId: selectedService,
+        ...(selectedBarber && { barberId: selectedBarber }),
+      })
 
-      // Keyboard navigation between steps (Alt+ArrowLeft / Alt+ArrowRight)
-      useEffect(() => {
-        const handler = (e: KeyboardEvent) => {
-          if (e.altKey && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
-            e.preventDefault()
-            if (e.key === 'ArrowRight' && step < 3) {
-              setStep(s => Math.min(s + 1, 3))
-            }
-            if (e.key === 'ArrowLeft' && step > 1) {
-              setStep(s => Math.max(s - 1, 1))
-            }
+      fetch(`/api/availability?${params}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            setAvailableTimes([])
+          } else {
+            setAvailableTimes(extractSlots(data))
           }
+          setLoadingSlots(false)
+        })
+        .catch(() => {
+          setAvailableTimes([])
+          setLoadingSlots(false)
+        })
+    }
+  }, [selectedDate, selectedService, selectedBarber])
+
+  // Track booking start when user enters details step
+  useEffect(() => {
+    if (step === 3) {
+      window.plausible?.('track', { props: { booking_step: 'details' } });
+    }
+  }, [step])
+
+  // Track booking completion
+  useEffect(() => {
+    if (isSuccess && createdBooking) {
+      window.plausible?.('track', 'Booking Complete', {
+        props: {
+          service: createdBooking.service?.name,
+          bookingId: createdBooking.id,
         }
-        window.addEventListener('keydown', handler)
-        return () => window.removeEventListener('keydown', handler)
-      }, [step])
+      });
+    }
+  }, [isSuccess, createdBooking]);
+
+  // Keyboard navigation between steps (Alt+ArrowLeft / Alt+ArrowRight)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.altKey && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+        e.preventDefault()
+        if (e.key === 'ArrowRight' && step < 3) {
+          setStep(s => Math.min(s + 1, 3))
+        }
+        if (e.key === 'ArrowLeft' && step > 1) {
+          setStep(s => Math.max(s - 1, 1))
+        }
+      }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [step])
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
@@ -255,7 +305,7 @@ fetch('/api/barbers')
             ✂️
           </motion.div>
         ))}
-
+        
         <div className="w-20 h-20 bg-accent rounded-full flex items-center justify-center mx-auto mb-6">
           <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -306,27 +356,27 @@ fetch('/api/barbers')
                 <span className="sr-only">Loading services…</span>
               </div>
             ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3" role="radiogroup" aria-label="Select a service">
-              {services.map((service) => (
-                <button
-                  key={service.id}
-                  type="button"
-                  onClick={() => setSelectedService(service.id)}
-                  role="radio"
-                  aria-checked={selectedService === service.id}
-                  aria-label={`${service.name}, ${service.price} dollars, ${service.duration} minutes`}
-                  className={cn(
-                    'p-4 rounded-lg border transition-all text-left',
-                    selectedService === service.id
-                      ? 'border-accent bg-accent/10'
-                      : 'border-gray-700 hover:border-gray-600'
-                  )}
-                >
-                  <div className="font-medium">{service.name}</div>
-                  <div className="text-sm text-gray-400">${service.price} • {service.duration} min</div>
-                </button>
-              ))}
-            </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3" role="radiogroup" aria-label="Select a service">
+                {services.map((service) => (
+                  <button
+                    key={service.id}
+                    type="button"
+                    onClick={() => setSelectedService(service.id)}
+                    role="radio"
+                    aria-checked={selectedService === service.id}
+                    aria-label={`${service.name}, ${service.price} dollars, ${service.duration} minutes`}
+                    className={cn(
+                      'p-4 rounded-lg border transition-all text-left',
+                      selectedService === service.id
+                        ? 'border-accent bg-accent/10'
+                        : 'border-gray-700 hover:border-gray-600'
+                    )}
+                  >
+                    <div className="font-medium">{service.name}</div>
+                    <div className="text-sm text-gray-400">${service.price} • {service.duration} min</div>
+                  </button>
+                ))}
+              </div>
             )}
             <button
               type="button"
@@ -341,7 +391,7 @@ fetch('/api/barbers')
             </button>
           </motion.div>
         )}
-
+        
         {step === 2 && (
           <motion.div
             key="datetime"
@@ -350,11 +400,11 @@ fetch('/api/barbers')
             exit={{ opacity: 0 }}
           >
             <h3 className="text-xl font-bold mb-4">Select Date &amp; Time</h3>
-
+            
             <div aria-live="polite" aria-atomic="true" className="sr-only">
               {loadingSlots ? 'Loading available time slots' : ''}
             </div>
-
+            
             <label htmlFor="booking-date" className="sr-only">Select a date</label>
             <input
               id="booking-date"
@@ -366,23 +416,24 @@ fetch('/api/barbers')
             />
             {barbers.length > 1 && (
               <>
-              <label htmlFor="booking-barber" className="sr-only">Select barber</label>
-              <select
-                id="booking-barber"
-                value={selectedBarber}
-                aria-label="Select a barber"
-                onChange={(e) => {
-                  setSelectedBarber(e.target.value)
-                  setSelectedTime('')
-                }}
-                className="w-full p-3 rounded-lg bg-primary-800 border border-gray-700 mb-4"
-              >
-                <option value="">Any Barber</option>
-                {barbers.map((b) => (
-                  <option key={b.id} value={b.id}>{b.name}</option>
-                ))}
-              </select>
-              </>
+                <label htmlFor="booking-barber" className="sr-only">Select barber</label>
+                <select
+                  id="booking-barber"
+                  value={selectedBarber}
+                  aria-label="Select a barber"
+                  onChange={(e) => {
+                    setSelectedBarber(e.target.value)
+                    setSelectedTime('')
+                  }}
+                  className="w-full p-3 rounded-lg bg-primary-800 border border-gray-700 mb-4"
+                >
+                  <option value="">Any Barber</option>
+                  {barbers.map((b) => (
+                    <option key={b.id} value={b.id}>{b.name}</option>
+                  ))}
+                </select>
+                </>
+              )}
             )}
             {selectedDate && (
               <div>
@@ -426,21 +477,21 @@ fetch('/api/barbers')
               >
                 Back
               </button>
-            <button
-              type="button"
-              onClick={() => {
-                window.plausible?.('track', { props: { step: 'datetime_to_details' } });
-                setStep(3);
-              }}
-              disabled={!selectedDate || !selectedTime || loadingSlots}
-              className="flex-1 py-3 bg-accent text-white rounded-lg font-medium disabled:opacity-50"
-            >
-              Continue
-            </button>
+              <button
+                type="button"
+                onClick={() => {
+                  window.plausible?.('track', { props: { step: 'datetime_to_details' } });
+                  setStep(3);
+                }}
+                disabled={!selectedDate || !selectedTime || loadingSlots}
+                className="flex-1 py-3 bg-accent text-white rounded-lg font-medium disabled:opacity-50"
+              >
+                Continue
+              </button>
             </div>
           </motion.div>
         )}
-
+        
         {step === 3 && (
           <motion.div
             key="details"
@@ -449,13 +500,13 @@ fetch('/api/barbers')
             exit={{ opacity: 0 }}
           >
             <h3 className="text-xl font-bold mb-4">Your Details</h3>
-
+            
             <div id="booking-error" aria-live="assertive" role="alert" aria-atomic="true">
               {bookingError && (
                 <p className="text-red-400 text-sm mb-4">{bookingError}</p>
               )}
             </div>
-
+            
             <div className="space-y-4">
               <label htmlFor="booking-name" className="sr-only">Full name</label>
               <input
