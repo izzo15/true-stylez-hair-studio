@@ -33,7 +33,7 @@ type VisualType =
 
 interface ChatMessage {
   role: 'user' | 'assistant'
-  content: string
+  content?: string
   visualType?: VisualType
   visualData?: unknown
 }

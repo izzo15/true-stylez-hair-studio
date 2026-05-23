@@ -18,7 +18,7 @@ export interface ServiceRecord {
   name: string
   price: number
   duration: number
-  category: string
+  category: string | null
   description?: string
 }
 

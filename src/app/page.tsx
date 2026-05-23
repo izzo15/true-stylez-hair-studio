@@ -12,6 +12,7 @@ import { HeroContent }          from '@/components/Hero/HeroContent'
 import ShopCam                  from '@/components/ShopCam'
 import ShopVideo                from '@/components/ShopVideo'
 import { TrimText }             from '@/components/TrimText'
+import CssBarberChair           from '@/components/CssBarberChair'
 import { TheCraft }             from '@/components/sections/TheCraft'
 import { TheTransformation }    from '@/components/sections/TheTransformation'
 import { LivingPolaroid, BarberProfile } from '@/components/sections/LivingPolaroid'
@@ -135,7 +136,7 @@ function SectionHeading({
   align = 'center',
 }: {
   eyebrow?: string
-  title: string
+  title: React.ReactNode
   subtitle?: string
   align?: 'left' | 'center'
 }) {

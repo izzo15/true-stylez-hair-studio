@@ -38,9 +38,9 @@ interface Booking {
 interface BookingWidgetProps {
   prefill?: {
     serviceId?: string
-    barberId?: string
-    date?: string
-    time?: string
+    barberId?: string | null
+    date?: string | null
+    time?: string | null
   }
 }
 

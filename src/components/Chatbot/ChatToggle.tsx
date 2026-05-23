@@ -1,5 +1,7 @@
 'use client'
 
+import { motion } from 'framer-motion'
+
 /**
  * ChatToggle — floating button in the bottom-right corner.
  *

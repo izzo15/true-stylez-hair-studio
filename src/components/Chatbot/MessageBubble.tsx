@@ -16,10 +16,11 @@ type VisualType =
   | 'hours'
   | 'barbers'
   | null
+  | undefined
 
 type MessageBubbleProps = {
   role: 'user' | 'assistant'
-  content: string
+  content?: string
   visualType?: VisualType
   visualData?: unknown
   /**
@@ -80,7 +81,7 @@ function renderVisuals(
     case 'serviceRecommendation': {
       const rec = visualData as {
         id: string; name: string; price: number
-        duration: number; category?: string
+        duration: number; category: string
         stylingTips?: string[]
       }
       if (!rec?.id) return null
