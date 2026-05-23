@@ -205,13 +205,7 @@ export default function Chatbot({
   ════════════════════════════════════════════════════════════════════ */
 
   function setVisuals(type: VisualType, data: unknown) {
-    setVisualType(type, data)
     visualTypeRef.current = type
-    visualDataRef.current = data
-  }
-
-  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-  function setBotVisualData(data: any) {
     visualDataRef.current = data
   }
 
@@ -664,7 +658,7 @@ function ChatInputBar({
   setInput: (v: string) => void
   isTyping: boolean
   onSubmit: (e: React.FormEvent) => void
-  inputRef: React.RefObject<HTMLInputElement | null>
+  inputRef: React.Ref<HTMLInputElement>
 }) {
   return (
     <form

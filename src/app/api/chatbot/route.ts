@@ -138,7 +138,12 @@ function buildTools() {
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
-  content: string
+  content: string | null
+}
+
+interface ToolCallArguments {
+  name?: string
+  arguments?: string
 }
 
 export async function POST(request: NextRequest) {
@@ -173,10 +178,20 @@ export async function POST(request: NextRequest) {
     // ── Trim to last 20 exchanges to control prompt length ─────────────────
     const recentMessages = messages.slice(-20)
 
+    // Internal message accumulator uses a looser union; cast to
+    // OpenAI's exact discriminated-union type only at the API boundary.
     const allMessages: ChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...recentMessages,
     ]
+
+    // Typed wrapper cast — OpenAI's SDK discriminates by literal role per
+    // message object. A mapped array where each role is asserted individually
+    // still carries a union type; we narrow by asserting the whole array.
+    const openaiStep1Messages = allMessages.map((m) => ({
+      role: m.role as 'system' | 'user' | 'assistant',
+      content: m.content,
+    })) as OpenAI.Chat.Completions.ChatCompletionMessageParam[]
 
     /* ── Step 1: non-streaming call to detect tool calls ─────────────────── */
     let firstCompletion: OpenAI.Chat.Completions.ChatCompletion
@@ -184,7 +199,7 @@ export async function POST(request: NextRequest) {
     try {
       firstCompletion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
-        messages: allMessages,
+        messages: openaiStep1Messages,
         tools,
         tool_choice: 'auto',
         temperature: 0.7,
@@ -203,15 +218,22 @@ export async function POST(request: NextRequest) {
 
     const aiMessage = firstCompletion.choices[0].message
 
-    // Build conversation up to the first assistant response
-    const step2Messages: ChatMessage[] = [...allMessages, aiMessage]
+    // Build conversation up to the first assistant response.
+    // step2Messages mixes OpenAI message types (which include 'role: "tool"')
+    // with our ChatMessage union, so we use `any` here and cast back to
+    // OpenAI's type only at the API boundary.
+    const step2Messages: any[] = [...allMessages, aiMessage]
 
     // ── Execute any tool calls ────────────────────────────────────────────
     if (aiMessage.tool_calls && aiMessage.tool_calls.length > 0) {
       for (const toolCall of aiMessage.tool_calls) {
-        const fnName = toolCall.function?.name
-        const fnArgs = toolCall.function?.arguments
-          ? JSON.parse(toolCall.function.arguments)
+        // Narrow the union type: ChatCompletionMessageToolCall =
+        //   ChatCompletionMessageFunctionToolCall | ChatCompletionMessageCustomToolCall
+        // We only register function-type tools, so assert to that shape.
+        const fnToolCall = toolCall as { function: { name: string; arguments: string } }
+        const fnName = fnToolCall.function.name
+        const fnArgs = fnToolCall.function.arguments
+          ? JSON.parse(fnToolCall.function.arguments)
           : {}
 
         let result: unknown

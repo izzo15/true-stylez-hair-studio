@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
@@ -432,10 +432,8 @@ export function BookingWidget({ prefill }: BookingWidgetProps) {
                     <option key={b.id} value={b.id}>{b.name}</option>
                   ))}
                 </select>
-                </>
-              )}
-            )}
-            {selectedDate && (
+              </>
+             )}            {selectedDate && (
               <div>
                 {loadingSlots ? (
                   <div className="flex justify-center py-8">
