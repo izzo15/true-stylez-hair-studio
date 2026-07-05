@@ -105,22 +105,21 @@ img, video { display: block; max-width: 100%; }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */
 
-/* Barber Pole */
+/* Barber Pole — classic red/white/blue diagonal stripe, spinning illusion */
 .barber-pole {
-  background: linear-gradient(
-    to bottom,
-    var(--clove)      0%, var(--clove)   25%,
-    var(--white)      25%, var(--white)  50%,
-    var(--clove)      50%, var(--clove)  75%,
-    var(--white)      75%, var(--white) 100%
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #c8102e 0,    #c8102e 12px,
+    #f5f5f0 12px, #f5f5f0 24px,
+    #1e3a8a 24px, #1e3a8a 36px,
+    #f5f5f0 36px, #f5f5f0 48px
   );
-  background-size: 100% 200%;
-  animation: spin-pole 2s linear infinite;
+  animation: spin-pole 1.4s linear infinite;
 }
 
 @keyframes spin-pole {
   from { background-position: 0 0; }
-  to   { background-position: 0 -200%; }
+  to   { background-position: 0 -48px; }
 }
 
 /* Glass morphism */

@@ -5,6 +5,7 @@ import { gsap } from 'gsap'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { ClipperReveal } from './ClipperReveal'
 import { HairParticles } from './HairParticles'
+import { BarberPole } from '@/components/BarberPole'
 
 export function HeroContent() {
   const prefersReduced = useReducedMotion()
@@ -18,7 +19,9 @@ export function HeroContent() {
 
       <div className="absolute inset-0 bg-[url('/textures/barber-bg.jpg')] bg-cover bg-center opacity-30" />
       
-      <div className="barber-pole absolute top-4 right-4 w-8 h-32 rounded opacity-50" />
+      <div className="absolute top-6 right-6">
+        <BarberPole className="w-7 h-32" />
+      </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
         <div className="hero-logo">
