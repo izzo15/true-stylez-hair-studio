@@ -253,14 +253,14 @@ export const recommendStyle = {
     maintenance: string
     vibe: string
   }): Promise<StyleRecommendation> => {
-    // ── Face-shape → base service mapping ──
+    // ── Face-shape → base service mapping (names must match prisma/seed.ts exactly) ──
     const baseServiceMap: Record<string, string> = {
       OVAL: 'Haircut',
-      ROUND: 'Skin Fade',
+      ROUND: 'High/Mid/Low Skin Fade',
       SQUARE: 'Haircut & Beard',
-      HEART: 'Mid Skin Fade',
+      HEART: 'High/Mid/Low Skin Fade',
       OBLONG: 'Haircut & Beard',
-      DIAMOND: 'High Skin Fade',
+      DIAMOND: 'High/Mid/Low Skin Fade',
       UNKNOWN: 'Haircut',
     }
 

@@ -1,19 +1,28 @@
 'use client'
 
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 export function MobileQuickBook() {
   const barRef = useRef<HTMLDivElement>(null)
   const dismissedRef = useRef(false)
-  const prefersReducedMotion =
-    typeof window !== 'undefined'
-      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      : false
+  const prefersReducedMotion = useReducedMotion()
 
-  const isMobile =
-    typeof window !== 'undefined' ? window.innerWidth < 768 : false
-  const shouldShow = isMobile && !dismissedRef.current
+  // isMobile starts false (matching SSR, where `window` doesn't exist) and is
+  // only computed on the client after mount, to avoid a hydration mismatch.
+  const [isMounted, setIsMounted] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setIsMounted(true)
+    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const shouldShow = isMounted && isMobile && !dismissedRef.current
 
   const smoothScrollTo = useCallback(
     (id: string) => {

@@ -1,8 +1,22 @@
 import { FaceAnalysisResult } from '@/lib/faceAnalysis';
+import { cn } from '@/lib/utils';
+import { BTN_PRIMARY, BTN_OUTLINE } from './buttonStyles';
 
 type ResultsPanelProps = {
   result: FaceAnalysisResult;
   onRetry: () => void;
+};
+
+// Face shape -> real service name (must match prisma/seed.ts service names exactly,
+// since the booking widget matches on name when no id is available).
+const FACE_SHAPE_SERVICE_NAME: Record<string, string> = {
+  OVAL: 'Haircut',
+  ROUND: 'High/Mid/Low Skin Fade',
+  SQUARE: 'Haircut & Beard',
+  HEART: 'High/Mid/Low Skin Fade',
+  OBLONG: 'Haircut & Beard',
+  DIAMOND: 'High/Mid/Low Skin Fade',
+  UNKNOWN: 'Haircut'
 };
 
 const ResultsPanel = ({ result, onRetry }: ResultsPanelProps) => {
@@ -16,44 +30,15 @@ const ResultsPanel = ({ result, onRetry }: ResultsPanelProps) => {
     UNKNOWN: 'Unknown'
   };
 
-  // Map face shape to service ID (this would need to match your service IDs from the API)
-  const getServiceIdForFaceShape = (faceShape: string): string | null => {
-    // This is a simplified mapping - in reality, you'd fetch services and match by name
-    const serviceNameMap: Record<string, string> = {
-      OVAL: 'Haircut',
-      ROUND: 'High/Mid/Low Skin Fade',
-      SQUARE: 'Haircut & Beard',
-      HEART: 'Mid Fade',
-      OBLONG: 'Haircut & Beard',
-      DIAMOND: 'Skin Fade',
-      UNKNOWN: 'Haircut'
-    };
-    
-    // For now, we'll return a placeholder - in a real implementation, 
-    // you'd look up the actual service ID from your services array
-    return serviceNameMap[faceShape] || null;
-  };
-
   const handleBookNow = () => {
-    // Dispatch a custom event to prefill the booking widget
-    const serviceNameMap: Record<string, string> = {
-      OVAL: 'Haircut',
-      ROUND: 'High/Mid/Low Skin Fade',
-      SQUARE: 'Haircut & Beard',
-      HEART: 'Mid Fade',
-      OBLONG: 'Haircut & Beard',
-      DIAMOND: 'Skin Fade',
-      UNKNOWN: 'Haircut'
-    };
-    
-    const serviceName = serviceNameMap[result.faceShape] || 'Haircut';
-    
-    // In a real app, you would look up the actual service ID from your services data
-    // For now, we'll dispatch the service name and let the booking widget handle matching
-    window.dispatchEvent(new CustomEvent('prefill-service', { 
-      detail: serviceName 
+    const serviceName = FACE_SHAPE_SERVICE_NAME[result.faceShape] || 'Haircut';
+
+    // Dispatch the service name and let the booking widget look up the real id
+    // (we don't have service ids available in this client-side-only component).
+    window.dispatchEvent(new CustomEvent('prefill-service', {
+      detail: { name: serviceName }
     }));
-    
+
     // Scroll to booking widget
     const bookingElement = document.getElementById('book');
     if (bookingElement) {
@@ -77,9 +62,9 @@ const ResultsPanel = ({ result, onRetry }: ResultsPanelProps) => {
             <h3 className="font-semibold text-neon-purple mb-2">Recommended Service</h3>
             <p className="text-xl">{result.serviceRecommendation}</p>
             {/* Button to book the recommended service */}
-            <button 
+            <button
               onClick={handleBookNow}
-              className="btn btn-primary w-full mt-3"
+              className={cn(BTN_PRIMARY, 'w-full mt-3')}
             >
               Book This Style →
             </button>
@@ -100,7 +85,7 @@ const ResultsPanel = ({ result, onRetry }: ResultsPanelProps) => {
       </div>
       
       <div className="flex justify-center">
-        <button onClick={onRetry} className="btn btn-outline">
+        <button onClick={onRetry} className={BTN_OUTLINE}>
           Try Another Photo
         </button>
       </div>

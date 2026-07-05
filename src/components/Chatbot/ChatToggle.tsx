@@ -27,7 +27,7 @@ const ChatToggle = ({ isOpen, onToggle, unreadCount }: ChatToggleProps) => {
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.92 }}
       className="
-        fixed right-6 bottom-6 z-50
+        fixed right-4 bottom-24 md:right-6 md:bottom-6 z-50
         w-14 h-14 rounded-full
         bg-neon-blue/20 flex items-center justify-center
         border border-neon-blue/30 backdrop-blur-md

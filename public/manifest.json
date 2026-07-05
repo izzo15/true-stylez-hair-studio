@@ -4,8 +4,8 @@
   "description": "Premium barber shop in Troy, NY. Precision cuts, sharp style.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#8b5cf6",
+  "background_color": "#0f0f11",
+  "theme_color": "#c4710f",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",

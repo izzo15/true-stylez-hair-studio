@@ -9,9 +9,13 @@ interface PolaroidProps {
   role: string
   years: string
   quote?: string
+  /** Real photo slot — set this once real photography is available (see docs/PHOTO_SLOTS.md) */
+  photoUrl?: string
+  /** id applied to the section heading, so a wrapping <section> can aria-labelledby it */
+  headingId?: string
 }
 
-export function LivingPolaroid({ name, role, years, quote }: PolaroidProps) {
+export function LivingPolaroid({ name, role, years, quote, photoUrl, headingId }: PolaroidProps) {
   const ref = useRef<HTMLDivElement>(null)
   const prefersReduced = useReducedMotion()
 
@@ -67,12 +71,12 @@ export function LivingPolaroid({ name, role, years, quote }: PolaroidProps) {
   }, [prefersReduced])
 
   return (
-    <section className="relative py-24 md:py-40 bg-primary-900 overflow-hidden">
+    <section className="relative py-24 md:py-40 bg-primary-900 overflow-hidden" aria-labelledby={headingId}>
       <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(217,70,0,0.08) 0%, transparent 70%)' }} />
 
       <div className="relative z-10 max-w-lg mx-auto px-6">
         <div className="text-center mb-14">
-          <h2 className="text-4xl md:text-6xl font-bold font-heading mb-4">
+          <h2 id={headingId} className="text-4xl md:text-6xl font-bold font-heading mb-4">
             Meet <span className="text-accent">Jonathan</span>
           </h2>
           <p className="text-gray-400 text-lg">
@@ -89,14 +93,23 @@ export function LivingPolaroid({ name, role, years, quote }: PolaroidProps) {
             style={{ perspective: 900 }}
           >
             <div className="relative bg-white/95 rounded-lg p-4 pb-16 shadow-2xl">
-              <div className="relative aspect-square rounded overflow-hidden bg-primary-800">
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{
-                    backgroundImage:
-                      "url('/textures/barber-placeholder.jpg')",
-                  }}
-                />
+              <div className="relative aspect-square rounded overflow-hidden bg-gradient-to-br from-obsidian-800 via-obsidian-700 to-clove-800 flex items-center justify-center">
+                {photoUrl ? (
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${photoUrl})` }}
+                    role="img"
+                    aria-label={`${name}, ${role}`}
+                  />
+                ) : (
+                  <span
+                    className="font-display font-bold text-gold-400/90 select-none"
+                    style={{ fontSize: 'clamp(4rem, 18vw, 7rem)' }}
+                    aria-hidden="true"
+                  >
+                    J
+                  </span>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>
 
@@ -124,13 +137,14 @@ export function LivingPolaroid({ name, role, years, quote }: PolaroidProps) {
   )
 }
 
-export function BarberProfile() {
+export function BarberProfile({ headingId }: { headingId?: string }) {
   return (
     <LivingPolaroid
       name="Jonathan"
       role="Master Barber"
       years="10"
       quote="A good fade tells a story before you even say hello."
+      headingId={headingId}
     />
   )
 }

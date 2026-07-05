@@ -7,37 +7,80 @@ import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 gsap.registerPlugin(ScrollTrigger)
 
+type CraftVariant = 'fades' | 'ritual' | 'beard'
+
 interface CraftItem {
   id: number
-  image: string
-  alt: string
+  variant: CraftVariant
   title: string
   description: string
+  /** Real photo slot — set this once real photography is available (see docs/PHOTO_SLOTS.md) */
+  image?: string
+  imageAlt?: string
 }
 
 const CRAFT_ITEMS: CraftItem[] = [
   {
     id: 1,
-    image: '/textures/barber-bg.jpg',
-    alt: 'Jonathan cutting hair',
+    variant: 'fades',
     title: 'Precision Fades',
     description: 'Every line drawn with intention. Jonathan treats each fade like canvas work — clean gradients, zero harsh edges.',
   },
   {
     id: 2,
-    image: '/textures/barber-bg.jpg',
-    alt: 'Hot towel treatment',
+    variant: 'ritual',
     title: 'The Ritual',
     description: 'Hot towels, straight-razor edges, and the kind of quiet focus that turns a haircut into an experience.',
   },
   {
     id: 3,
-    image: '/textures/barber-bg.jpg',
-    alt: 'Beard trimming',
+    variant: 'beard',
     title: 'Beard Architecture',
     description: 'Shape, texture, and line. Jonathan sculpts facial hair with the same care he puts into every head fade.',
   },
 ]
+
+const CRAFT_GRADIENTS: Record<CraftVariant, string> = {
+  fades : 'from-clove-800 via-clove-700 to-obsidian-800',
+  ritual: 'from-gold-800 via-gold-700 to-obsidian-800',
+  beard : 'from-obsidian-700 via-clove-800 to-obsidian-900',
+}
+
+/** Simple line-art icon matching each craft item's theme */
+function CraftIcon({ variant }: { variant: CraftVariant }) {
+  return (
+    <svg viewBox="0 0 100 100" className="w-20 h-20 md:w-28 md:h-28 text-white/85" fill="none" aria-hidden="true">
+      {variant === 'fades' && (
+        <>
+          {/* Clippers */}
+          <rect x="30" y="55" width="16" height="24" rx="3" stroke="currentColor" strokeWidth="3" />
+          <rect x="46" y="55" width="16" height="24" rx="3" stroke="currentColor" strokeWidth="3" />
+          <path d="M38 55V38a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v17" stroke="currentColor" strokeWidth="3" />
+          <path d="M54 55V38a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v17" stroke="currentColor" strokeWidth="3" />
+          <path d="M35 30h30" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+        </>
+      )}
+      {variant === 'ritual' && (
+        <>
+          {/* Steam over folded towel */}
+          <path d="M32 40q4-8 0-16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+          <path d="M50 40q4-8 0-16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+          <path d="M68 40q4-8 0-16" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+          <rect x="24" y="46" width="52" height="30" rx="4" stroke="currentColor" strokeWidth="3" />
+          <path d="M24 58h52" stroke="currentColor" strokeWidth="2" opacity="0.6" />
+        </>
+      )}
+      {variant === 'beard' && (
+        <>
+          {/* Razor + comb */}
+          <path d="M28 30l40 40" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
+          <path d="M60 30l8 8-32 32-8-8z" stroke="currentColor" strokeWidth="3" strokeLinejoin="round" />
+          <path d="M30 62h28M30 68h28M30 74h28" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" opacity="0.7" />
+        </>
+      )}
+    </svg>
+  )
+}
 
 export function TheCraft() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -119,10 +162,18 @@ export function TheCraft() {
                 ref={(el) => { imageRefs.current[i] = el }}
                 className="relative w-full md:w-3/5 aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl"
               >
-                <div
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${item.image})` }}
-                />
+                {item.image ? (
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${item.image})` }}
+                    role="img"
+                    aria-label={item.imageAlt ?? item.title}
+                  />
+                ) : (
+                  <div className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br ${CRAFT_GRADIENTS[item.variant]}`}>
+                    <CraftIcon variant={item.variant} />
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-900/70 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <span className="text-accent text-xs font-semibold tracking-widest uppercase">

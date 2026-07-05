@@ -22,7 +22,7 @@ export function HeroContent() {
 
       <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
         <div className="hero-logo">
-          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-gold-400">
             True Stylez
             <span className="block text-accent text-2xl md:text-3xl font-medium mt-2">
               feat. J The Barber

@@ -161,9 +161,9 @@ export function getServiceRecommendation(faceShape: FaceShape): string {
     case 'OVAL': return 'Haircut';
     case 'ROUND': return 'High/Mid/Low Skin Fade';
     case 'SQUARE': return 'Haircut & Beard';
-    case 'HEART': return 'Mid Fade';
+    case 'HEART': return 'High/Mid/Low Skin Fade';
     case 'OBLONG': return 'Haircut & Beard';
-    case 'DIAMOND': return 'Skin Fade';
+    case 'DIAMOND': return 'High/Mid/Low Skin Fade';
     default: return 'Haircut'; // default
   }
 }

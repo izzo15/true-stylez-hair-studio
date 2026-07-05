@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect, DragEvent } from 'react';
+import { cn } from '@/lib/utils';
+import { BTN_PRIMARY, BTN_OUTLINE, BTN_SECONDARY } from './buttonStyles';
 
 type PhotoUploadProps = {
   onUpload: (file: File) => void;
@@ -117,11 +119,11 @@ const PhotoUpload = ({ onUpload, onCameraStart, videoRef }: PhotoUploadProps) =>
           <div className="space-y-4">
             <p className="text-neon-blue/80">Drag & drop an image here</p>
             <p className="text-muted-foreground">or</p>
-            <button onClick={() => fileInputRef.current?.click()} className="btn btn-outline">
+            <button onClick={() => fileInputRef.current?.click()} className={BTN_OUTLINE}>
               Browse Images
             </button>
             <div className="space-y-3">
-              <button onClick={handleCameraClick} className="btn btn-secondary">
+              <button onClick={handleCameraClick} className={BTN_SECONDARY}>
                 <span className="mr-2">📷</span> Use Camera
               </button>
               <input type="file" accept="image/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileInputChange} />
@@ -136,13 +138,13 @@ const PhotoUpload = ({ onUpload, onCameraStart, videoRef }: PhotoUploadProps) =>
             className="max-w-full rounded-lg border border-neon-blue/20"
           />
           <div className="space-y-3">
-            <button onClick={handleUploadClick} className="btn btn-primary w-full">
+            <button onClick={handleUploadClick} className={cn(BTN_PRIMARY, 'w-full')}>
               Analyze Face
             </button>
             <button onClick={() => {
               setIsFileSelected(false);
               setSelectedFile(null);
-            }} className="btn btn-outline w-full">
+            }} className={cn(BTN_OUTLINE, 'w-full')}>
               Choose Different Image
             </button>
           </div>
@@ -156,10 +158,10 @@ const PhotoUpload = ({ onUpload, onCameraStart, videoRef }: PhotoUploadProps) =>
             className="w-full rounded-lg border border-neon-blue/20 bg-black"
           />
           <div className="space-y-3">
-            <button onClick={handleCaptureClick} className="btn btn-primary w-full">
+            <button onClick={handleCaptureClick} className={cn(BTN_PRIMARY, 'w-full')}>
               Capture & Analyze
             </button>
-            <button onClick={handleCancelCamera} className="btn btn-outline w-full">
+            <button onClick={handleCancelCamera} className={cn(BTN_OUTLINE, 'w-full')}>
               Cancel Camera
             </button>
           </div>

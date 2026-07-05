@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { KonamiCode } from '@/components/KonamiCode'
 import { GestureNav } from '@/components/GestureNav'
 
@@ -20,6 +21,12 @@ const brandTagStyle = {
 }
 
 const navLinks = ['About', 'Services', 'Barbers', 'Reviews'] as const
+
+/** Blog link — always routes to /blog, not an anchor */
+const blogLink: { label: string; href: string } = {
+  label: 'Blog',
+  href: '/blog',
+}
 
 /* ── Sub-component: Confetti rain ──────────────────────────────────────────── */
 
@@ -107,13 +114,13 @@ function LogoMark({ scrolled, isBirthday }: {
 
 /* ── Sub-component: Desktop nav links ─────────────────────────────────────── */
 
-function DesktopNav({ scrolled }: { scrolled: boolean }) {
+function DesktopNav({ scrolled, isHome }: { scrolled: boolean; isHome: boolean }) {
   return (
     <nav aria-label="Primary navigation" className="hidden md:flex items-center gap-8">
       {navLinks.map((item) => (
         <Link
           key={item}
-          href={`#${item.toLowerCase()}`}
+          href={isHome ? `#${item.toLowerCase()}` : `/#${item.toLowerCase()}`}
           className="relative text-sm font-medium tracking-wide
                      text-gray-300 hover:text-white
                      transition-colors duration-200
@@ -125,32 +132,49 @@ function DesktopNav({ scrolled }: { scrolled: boolean }) {
           {item}
         </Link>
       ))}
+      {/* Blog — full-page link */}
+      <Link
+        href={blogLink.href}
+        className="relative text-sm font-medium tracking-wide
+                   text-gray-300 hover:text-white
+                   transition-colors duration-200
+                   after:absolute after:bottom-[-3px] after:left-0
+                   after:h-[2px] after:w-0 after:bg-clove
+                   after:transition-all after:duration-300
+                   hover:after:w-full"
+      >
+        {blogLink.label}
+      </Link>
     </nav>
   )
 }
 
-/* ── Sub-component: Deskt
+/* ── Sub-component: Desktop CTA button ─────────────────────────────────────── */
 
-op CTA button ─────────────────────────────────────────────────────── */
+const bookNowClasses = `
+  px-6 py-2 rounded-full font-semibold text-sm tracking-wide
+  bg-clove text-white
+  hover:bg-clove-light active:bg-clove-dark
+  transition-colors duration-200
+  shadow-glow-clove hover:shadow-glow-clove-lg
+  logo-vibrate
+`
 
-function BookNowButton() {
+function BookNowButton({ isHome }: { isHome: boolean }) {
   const handleClick = useCallback(() => {
     document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
+  if (!isHome) {
+    return (
+      <Link href="/#book" className={bookNowClasses}>
+        Book Now
+      </Link>
+    )
+  }
+
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      className="
-        px-6 py-2 rounded-full font-semibold text-sm tracking-wide
-        bg-clove text-white
-        hover:bg-clove-light active:bg-clove-dark
-        transition-colors duration-200
-        shadow-glow-clove hover:shadow-glow-clove-lg
-        logo-vibrate
-      "
-    >
+    <button type="button" onClick={handleClick} className={bookNowClasses}>
       Book Now
     </button>
   )
@@ -191,7 +215,7 @@ function Hamburger({ open, onClick }: { open: boolean; onClick: () => void }) {
 
 /* ── Sub-component: Mobile drawer ─────────────────────────────────────────── */
 
-function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+function MobileDrawer({ open, onClose, isHome }: { open: boolean; onClose: () => void; isHome: boolean }) {
   const handleLinkClick = useCallback(() => { onClose() }, [onClose])
 
   return (
@@ -210,7 +234,7 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
       {navLinks.map((item) => (
         <Link
           key={item}
-          href={`#${item.toLowerCase()}`}
+          href={isHome ? `#${item.toLowerCase()}` : `/#${item.toLowerCase()}`}
           onClick={handleLinkClick}
           className="text-xl font-heading font-semibold text-gray-200
                      hover:text-clove transition-colors"
@@ -218,14 +242,37 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           {item}
         </Link>
       ))}
-      <button
-        type="button"
-        onClick={() => { handleLinkClick(); }}
-        className="mt-2 w-full py-3 rounded-full bg-clove text-white
-                   font-semibold text-sm tracking-wide"
+      {/* Blog — full-page link */}
+      <Link
+        href={blogLink.href}
+        onClick={handleLinkClick}
+        className="text-xl font-heading font-semibold text-gray-200
+                   hover:text-clove transition-colors"
       >
-        Book Now
-      </button>
+        {blogLink.label}
+      </Link>
+      {isHome ? (
+        <button
+          type="button"
+          onClick={() => {
+            handleLinkClick()
+            document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' })
+          }}
+          className="mt-2 w-full py-3 rounded-full bg-clove text-white
+                     font-semibold text-sm tracking-wide text-center"
+        >
+          Book Now
+        </button>
+      ) : (
+        <Link
+          href="/#book"
+          onClick={handleLinkClick}
+          className="mt-2 w-full py-3 rounded-full bg-clove text-white
+                     font-semibold text-sm tracking-wide text-center"
+        >
+          Book Now
+        </Link>
+      )}
     </motion.div>
   )
 }
@@ -233,6 +280,8 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 /* ── Component ─────────────────────────────────────────────────────────────── */
 
 export function Navbar() {
+  const pathname = usePathname()
+  const isHome = pathname === '/'
   const [scrolled, setScrolled] = useState(false)
   const [isBirthday, setIsBirthday] = useState(false)
   const [triggerCount, setTriggerCount] = useState(0)
@@ -306,8 +355,8 @@ export function Navbar() {
 
           {/* Desktop links + CTA */}
           <div className="hidden md:flex items-center gap-10">
-            <DesktopNav scrolled={scrolled} />
-            <BookNowButton />
+            <DesktopNav scrolled={scrolled} isHome={isHome} />
+            <BookNowButton isHome={isHome} />
           </div>
 
           {/* Hamburger */}
@@ -316,7 +365,7 @@ export function Navbar() {
       </motion.nav>
 
       {/* Mobile drawer */}
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} isHome={isHome} />
     </>
   )
 }

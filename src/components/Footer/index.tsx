@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 const PixelBarber = () => {
   const [isNodding, setIsNodding] = useState(false)
-  
+
   return (
-    <div 
+    <div
       className="relative w-10 h-10 cursor-pointer"
       onMouseEnter={() => setIsNodding(true)}
       onMouseLeave={() => setIsNodding(false)}
@@ -49,11 +50,20 @@ const PixelBarber = () => {
   )
 }
 
+const QUICK_LINKS = ['About', 'Services', 'Barbers', 'Reviews'] as const
+const MAPS_URL = 'https://www.google.com/maps/search/?api=1&query=' +
+  encodeURIComponent('True Stylez Hair Studio, 332 Congress St, Troy, NY 12180')
+
 export function Footer() {
+  const pathname = usePathname()
+  const isHome = pathname === '/'
+
   return (
-    <footer className="bg-primary-900 py-12 px-4">
+    <footer className="relative bg-gradient-to-b from-obsidian-900 to-obsidian-950 py-12 px-4">
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-clove/60 to-transparent" aria-hidden="true" />
+
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-8 mb-8">
+        <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
             <h3 className="text-2xl font-bold mb-4">True Stylez Hair Studio</h3>
             <p className="text-gray-400">feat. J The Barber</p>
@@ -61,9 +71,18 @@ export function Footer() {
 
           <div>
             <h4 className="font-bold mb-3">Contact</h4>
-            <p className="text-gray-400">332 Congress St, 1</p>
-            <p className="text-gray-400">Troy, NY 12180</p>
-            <p className="text-gray-400">(518) 961-6997</p>
+            <a
+              href={MAPS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-gray-400 hover:text-clove-light transition-colors"
+            >
+              <p>332 Congress St, 1</p>
+              <p>Troy, NY 12180</p>
+            </a>
+            <a href="tel:+15189616997" className="text-gray-400 hover:text-clove-light transition-colors">
+              (518) 961-6997
+            </a>
           </div>
 
           <div>
@@ -72,6 +91,27 @@ export function Footer() {
             <p className="text-gray-400">Sat: 10AM–4:30PM</p>
             <p className="text-gray-400">Sun/Mon: Closed</p>
           </div>
+
+          <div>
+            <h4 className="font-bold mb-3">Quick Links</h4>
+            <ul className="space-y-2">
+              {QUICK_LINKS.map((item) => (
+                <li key={item}>
+                  <Link
+                    href={isHome ? `#${item.toLowerCase()}` : `/#${item.toLowerCase()}`}
+                    className="text-gray-400 hover:text-clove-light transition-colors"
+                  >
+                    {item}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href="/blog" className="text-gray-400 hover:text-clove-light transition-colors">
+                  Blog
+                </Link>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div className="flex justify-between items-center pt-6 border-t border-gray-800">
@@ -79,9 +119,9 @@ export function Footer() {
             <PixelBarber />
             <p className="text-gray-500">© 2024 True Stylez Hair Studio</p>
           </div>
-          <a 
-            href="https://instagram.com/j_thebarberny" 
-            target="_blank" 
+          <a
+            href="https://instagram.com/j_thebarberny"
+            target="_blank"
             rel="noopener noreferrer"
             className="text-accent hover:underline logo-vibrate"
           >

@@ -3,9 +3,12 @@ import Providers from '@/components/Providers'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { getSeasonalThemeVars } from '@/lib/seasonalTheme'
+import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://truestylez.com'),
   title: 'True Stylez Hair Studio | J The Barber',
   description: 'Premium barber shop in Troy, NY. Precision cuts, sharp style. Book your appointment online.',
   keywords: 'barber, haircut, fade, beard trim, troy ny, mens grooming',
@@ -14,7 +17,6 @@ export const metadata: Metadata = {
     description: 'Premium barber shop in Troy, NY. Precision cuts, sharp style.',
     url: 'https://truestylez.com',
     siteName: 'True Stylez Hair Studio',
-    images: [{ url: '/og-image.jpg' }],
     locale: 'en_US',
     type: 'website',
   },
@@ -46,7 +48,9 @@ export default async function RootLayout({
       </head>
       <body className="antialiased">
         <Providers session={session}>
+          <Navbar />
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>

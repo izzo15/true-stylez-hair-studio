@@ -95,8 +95,14 @@ export function BookingWidget({ prefill }: BookingWidgetProps) {
 
   useEffect(() => {
     const handler = (e: CustomEvent) => {
-      const serviceName = e.detail as string
-      const service = servicesRef.current.find(s => s.name === serviceName)
+      // Accepts either a plain string (legacy, treated as a name) or
+      // { id?, name? } — id is preferred since it can't drift out of sync
+      // with the DB the way a hardcoded name can.
+      const detail = e.detail as string | { id?: string; name?: string }
+      const query = typeof detail === 'string' ? { name: detail } : detail
+      const service = query.id
+        ? servicesRef.current.find(s => s.id === query.id)
+        : servicesRef.current.find(s => s.name === query.name)
       if (service) {
         setSelectedService(service.id)
         setStep(2)
@@ -337,8 +343,22 @@ export function BookingWidget({ prefill }: BookingWidgetProps) {
     )
   }
 
+  const STEP_LABELS = ['Service', 'Date & Time', 'Details']
+
   return (
     <div className="glass rounded-2xl p-6 md:p-8">
+      {/* ─── Step progress indicator ─────────────────────────────────────── */}
+      <div className="flex items-center gap-2 mb-6" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={3} aria-label={`Step ${step} of 3: ${STEP_LABELS[step - 1]}`}>
+        {STEP_LABELS.map((label, i) => (
+          <div key={label} className="flex-1 flex items-center gap-2">
+            <div className={cn('h-1.5 flex-1 rounded-full transition-colors', i + 1 <= step ? 'bg-gold-500' : 'bg-gray-700')} />
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-mist font-medium mb-4 -mt-2">
+        Step {step} of 3 &middot; {STEP_LABELS[step - 1]}
+      </p>
+
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div

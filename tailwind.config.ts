@@ -5,6 +5,7 @@ export default {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/lib/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -14,8 +15,18 @@ export default {
         body    : ['Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
+        /* ── Legacy section-background scale (still used across many
+               sections/components — preserved as flat keys, not a shade
+               scale, matching how they were originally authored) ──────── */
+        primary       : 'var(--primary-color, #d94600)',
+        'primary-900' : '#1a1f2e',
+        'primary-800' : '#1e293b',
+
         /* ── Brand ───────────────────────────────────────────────────── */
         clove   : {
+          DEFAULT: 'var(--clove, #c4710f)',
+          light: 'var(--clove-light, #e07010)',
+          dark : 'var(--clove-dark, #8b4800)',
           50  : '#fef3e8',
           100 : '#fce0ca',
           200 : '#f8be8f',
@@ -85,6 +96,12 @@ export default {
 
         /* ── Semantic aliases ────────────────────────────────────────── */
         accent  : 'var(--color-accent, #d94600)',
+        cloud   : 'var(--cloud, #d0d0d5)',
+        mist    : 'var(--mist, #888890)',
+        smoke   : {
+          DEFAULT: 'var(--smoke, #2a2b2e)',
+          light  : 'var(--smoke-light, #3a3b3f)',
+        },
 
         /* ── Neutral ────────────────────────────────────────────────── */
         neutral : {

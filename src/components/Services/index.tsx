@@ -32,6 +32,11 @@ export function Services() {
     ? services
     : services.filter(s => s.category === activeCategory)
 
+  const handleServiceClick = (service: Service) => {
+    window.dispatchEvent(new CustomEvent('prefill-service', { detail: { id: service.id } }))
+    document.getElementById('book')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center py-12">
@@ -70,7 +75,12 @@ export function Services() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="glass rounded-lg p-4 text-center group relative overflow-hidden cursor-pointer hover:ring-1 hover:ring-accent/30 transition-all duration-300"
+            onClick={() => handleServiceClick(service)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleServiceClick(service) } }}
+            aria-label={`Book ${service.name}, $${service.price}, ${service.duration} minutes`}
+            className="glass rounded-lg p-4 text-center group relative overflow-hidden cursor-pointer hover:ring-1 hover:ring-accent/30 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/5 transition-all" />
             <div className="comb-wave pointer-events-none" />
