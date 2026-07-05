@@ -1,6 +1,6 @@
-# Photo slots
+# Photo & video slots
 
-Every place on the site currently using a placeholder instead of a real photo, and exactly what to change when real photography is ready. None of these require touching component logic — just supply a URL/path.
+Every place on the site currently using a placeholder instead of real photo/video, and exactly what to change when it's ready. None of these require touching component logic — just supply a URL/path.
 
 | # | Section | File | How to fill it | Aspect |
 |---|---------|------|-----------------|--------|
@@ -13,3 +13,11 @@ Every place on the site currently using a placeholder instead of a real photo, a
 | 7 | Open Graph / social share image | `src/app/opengraph-image.tsx` | Currently code-generated (brand wordmark on a clove/gold/obsidian gradient) via Next's `ImageResponse` — no file needed. Swap this file for a real designed image if you want an actual photo in link previews. | 1200×630 |
 
 Everything above degrades gracefully today — no broken images, no layout shift, no misleading "0 reviews" style claims. Filling a slot is a one-line change per row.
+
+## Video slots — shop clips ("Live" grid)
+
+| # | Section | File | How to fill it |
+|---|---------|------|-----------------|
+| 8 | 3×3 "Live" clip grid | `src/data/videos.ts`, `shopClips` array | Add `{ id: 1-9, src: '/videos/your-clip.mp4', poster?: '/videos/your-clip-poster.jpg', caption?: '...' }` per clip. Any slot (1-9) without a matching entry keeps the placeholder scanning animation, so you can roll clips out a few at a time. |
+
+**Where to put the files:** drop video files in `public/videos/`. **Source:** since these are Jonathan's own TikTok videos, export/download them directly from TikTok (Share → Save video) rather than scraping — that's the only approach that doesn't depend on a third-party site staying up or fighting bot detection. A poster/thumbnail image is optional but avoids a blank first frame before the clip is clicked; if omitted, a plain gradient placeholder is shown instead. Keep files reasonably compressed (TikTok exports are already a manageable size, typically well under 20MB per clip) since all 9 could theoretically be requested on one page load.
